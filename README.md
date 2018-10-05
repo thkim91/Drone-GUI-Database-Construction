@@ -1,6 +1,5 @@
 # IST_303-GroupProject--Group2
-* IST 303
-* Group 2 - The Python Pilots
+* IST 303 Group 2 - The Python Pilots
 
 # Part A
 * Due: GitHub repository URL for your project. There should be a README in the repo with relevant documentation i.e. team members, stakeholders, requirements etc. 
