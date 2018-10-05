@@ -16,52 +16,52 @@ Control the Tello drone with a GUI to take off, fly, and land.
   * Priority: 10
 
 * Title: Fly in a circle
-  * Description: As a user, I should be able to fly the drone in a circle.
+  * Description: As a user, I should be able to fly the drone in a circle, so that I can move the drones to the direction wherever I want.
   * Completion time: Two weeks
   * Priority: 30
 
 * Title: Land drone
-  * Description: As a user, I should be able to land the drone safely on the ground.
+  * Description: As a user, I should be able to land the drone safely on the ground, so that I can safetly end the flight.
   * Completion time: One week
   * Priority: 10
 
 * Title: Display the remaining charge of the battery.
-  * Description: As a user, I should be able to see the remaining battery charge in the GUI.
+  * Description: As a user, I should be able to see the remaining battery charge in the GUI, so that I can end the flight before it runs out of battery in the sky.
   * Completion time: One week
   * Priority: 30
 
 * Title: Display the drone’s status
-  * Description: As a user, I should be able to see the status of the drone. For example, if the drone is either connected or disconnected from the computer.
+  * Description: As a user, I should be able to see the status of the drone, so that I can know whether it is connection problem or seomthing else when the drone is not working. For example, if the drone is either connected or disconnected from the computer.
   * Completion time: One week
   * Priority: 20
 
 * Title: Define flight plan
-  * Description: As a user, I should be able to design a flight plan in the GUI and have the drone execute the flight plan. For example, the drone will fly 15ft, rotate, fly 15ft back before landing
+  * Description: As a user, I should be able to design a flight plan in the GUI, so that I can excecute the flight plan . For example, the drone will fly 15ft, rotate, fly 15ft back before landing
   * Completion time: 3 weeks
   * Priority: 20
 
 * Title: Register user
-  * Description: As a user, I should be able to create an account to be recognized in the system as a unique user.
+  * Description: As a user, I should be able to create an account, so that the system can recognize who is the a unique user.
   * Completion time: 2 weeks
   * Priority: 10
 
 * Title: Login/out
-  * Description: As a user, I should be able to log in to be able to access the system.
+  * Description: As a user, I should be able to log in to be able to access the system, so that I can activate/deactivate the drone.
   * Completion time: 2 weeks
   * Priority: 10
 
 * Title: Forgot password:
-  * Description: As a user, I should be able to reset my password in case I forget it, in order to access the system.
+  * Description: As a user, I should be able to reset my password, so that I can still access the system in case I forget it.
   * Completion time: 2 weeks
   * Priority: 20
 
 * Title: Take Photo
-  * Description: As a user, I should be able to take a photo, in order to see what the drone saw during flight.
+  * Description: As a user, I should be able to take a photo, so that I can see what the drone saw during flight.
   * Completion time: 3 weeks
   * Priority: 30
 
 * Title: Measure Temperature
-  * Description: As a user, I should be able to measure temperature, in order to understand the drone’s environment during flight.
+  * Description: As a user, I should be able to measure temperature, so that I can understand the drone’s environment during flight.
   * Completion time: 4 weeks
   * Priority: 40
 
