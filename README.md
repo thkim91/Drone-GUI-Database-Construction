@@ -21,7 +21,7 @@ Control the Tello drone with a GUI to take off, fly, and land.
   * Priority: 30
 
 * Title: Land drone
-  * Description: As a user, I should be able to land the drone safely on the ground, so that I can safetly end the flight.
+  * Description: As a user, I should be able to land the drone safely on the ground, so that I can end the flight without damaging the drone.
   * Completion time: One week
   * Priority: 10
 
@@ -31,12 +31,12 @@ Control the Tello drone with a GUI to take off, fly, and land.
   * Priority: 30
 
 * Title: Display the drone’s status
-  * Description: As a user, I should be able to see the status of the drone, so that I can know whether it is connection problem or seomthing else when the drone is not working. For example, if the drone is either connected or disconnected from the computer.
+  * Description: As a user, I should be able to see the status of the drone, so that I can know whether it is connection problem or seomthing else when the drone is not working.
   * Completion time: One week
   * Priority: 20
 
 * Title: Define flight plan
-  * Description: As a user, I should be able to design a flight plan in the GUI, so that I can excecute the flight plan . For example, the drone will fly 15ft, rotate, fly 15ft back before landing
+  * Description: As a user, I should be able to design a flight plan in the GUI, so that I can excecute the flight plan . For example, the drone will fly 15ft, rotate, fly 15ft back before landing.
   * Completion time: 3 weeks
   * Priority: 20
 
@@ -46,7 +46,7 @@ Control the Tello drone with a GUI to take off, fly, and land.
   * Priority: 10
 
 * Title: Login/out
-  * Description: As a user, I should be able to log in to be able to access the system, so that I can activate/deactivate the drone.
+  * Description: As a user, I should be able to log in/out to be able to access the system, so that I can activate/deactivate the drone.
   * Completion time: 2 weeks
   * Priority: 10
 
@@ -80,6 +80,7 @@ Control the Tello drone with a GUI to take off, fly, and land.
 
 * Toy store - let users use a simple UI to control the drone
   * As a player, I want fly drone in a circle because I think it’s cool.
+  
 * Sell software to people that don’t have a suitable phone to control it
 
 # Data elements (flight log)
@@ -94,9 +95,10 @@ Control the Tello drone with a GUI to take off, fly, and land.
 * Complete flight? [True/False]
 * Reason for the failure, if applicable
 * Temperature
+* #of charges
+* Location of charge
 
-# Location of charge
-* GitHub
+# GitHub
 * GitHub repository: https://github.com/thkim91/IST_303-GroupProject--Group2.git
 
 # Team members
