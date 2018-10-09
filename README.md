@@ -1,8 +1,8 @@
-# Part A, B
-* The document below covers Part A and B
-
 # IST_303-GroupProject--Group2
 * IST 303 Group 2 - The Python Pilots
+
+# Part A, B
+* The document below covers Part A and B
 
 # Concept
 * Control the Tello drone with a GUI to take off, fly, and land.
