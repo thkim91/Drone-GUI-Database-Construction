@@ -44,7 +44,7 @@ def help_command():
     1. For auto takeoff and land:
         - takeoff
         - land
-    2. For moving drone by xx much far (xx is ranged from 20 to 500cm): 
+    2. For moving drone by xx distance (xx is ranged from 20 to 500cm): 
         - up xx 
         - down xx 
         - left xx 
@@ -103,13 +103,13 @@ def test_battery_func_of_filght(object_instance):
     amount = 30
     assert object_instance[1].battery_left(amount) == 100 - amount
 
-@pytest.mark.xfail(reason = 'The variable that is compared to flight.date is intentionaaly set differnt date')
+@pytest.mark.xfail(reason = 'The variable that is compared to flight.date is intentionally set to an incorrect date')
 def test_date_flight(object_instance):
     random_date = date(2018,10,12)
     assert object_instance[1].date == random_date
 
 def test_instruction_takeoff(help_command):
-    "the function shows if there is instruction for takeoff command"
+    "This function tests if there is an instruction for takeoff command"
     assert 'takeoff' in help_command
 
 @pytest.mark.xfail(reason = 'It is not connected to drone ip')
@@ -126,19 +126,20 @@ def main():
     
     print ('\r\n\r\nWelcome!\r\n')
 
-    name_pliot = input("what is your name, pilot?")
-    print("Hello,",name_pliot +". Let's have some fun with drone!\n")
+    name_pliot = input("What is your name, pilot?")
+    print("Hello,",name_pliot +". Let's have some fun with the drone!\n")
     new_flight = flight(name_pliot)
     print ('\nPlease type "command" to start commanding the drone.\n')
-    print ('Once command interpreter returns "OK", type any command lines.\n')
-    print ('If need command instruction, type "help command".\n')
+    print ('Once the command interpreter returns "OK", type any command lines.\n')
+    print ('If need command instructions, type "help command".\n')
     print ('If want to disconnect, type "end".\n')
 
     while True: 
 
         try:
             if internet_on() == False:
-                print("\nI sorry, it looks like you have not successfully connected to drone yet\nPlease try again after connecting to drone")
+                print("\nSorry, it looks like you have not successfully connected to drone yet!\nPlease try again after connecting to the drone")
+                sock.close() 
                 break
             else:
                 pass
