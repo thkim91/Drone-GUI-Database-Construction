@@ -32,7 +32,7 @@ def recv():
 def internet_on():    
     hostname = socket.gethostname()
     IPaddress = socket.gethostbyname(hostname)
-    if IPaddress == tello_address[0]:
+    if IPaddress == '192.168.10.1':
         return True
     else:
         return False
@@ -137,12 +137,12 @@ def main():
     while True: 
 
         try:
-            # if internet_on() == False:
-            #     print("\nSorry, it looks like you have not successfully connected to drone yet!\nPlease try again after connecting to the drone")
-            #     sock.close() 
-            #     break
-            # else:
-            #     pass
+            if internet_on() == False:
+                print("\nSorry, it looks like you have not successfully connected to drone yet!\nPlease try again after connecting to the drone")
+                sock.close() 
+                break
+            else:
+                pass
                 
             msg = input("")
                 
