@@ -1,7 +1,7 @@
-# Tello Python3 Control Demo 
+# Tello Python3 Control Demo
 # http://www.ryzerobotics.com/
 
-import threading 
+import threading
 import socket
 import sys
 import time
@@ -9,7 +9,7 @@ import pytest
 
 host = ''
 port = 9000
-locaddr = (host,port) 
+locaddr = (host,port)
 
 
 # Create a UDP socket
@@ -21,7 +21,7 @@ sock.bind(locaddr)
 
 def recv():
     count = 0
-    while True: 
+    while True:
         try:
             data, server = sock.recvfrom(1518)
             print(data.decode(encoding="utf-8"))
@@ -29,14 +29,14 @@ def recv():
             print ('\nExit . . .\n')
             break
 
-def internet_on():    
+def internet_on():
     hostname = socket.gethostname()
     IPaddress = socket.gethostbyname(hostname)
-    if IPaddress == '192.168.10.1':
+    if IPaddress == '192.168.10.2':
         return True
     else:
         return False
-    
+
 @pytest.fixture()
 def help_command():
     instruction = """
@@ -44,17 +44,17 @@ def help_command():
     1. For auto takeoff and land:
         - takeoff
         - land
-    2. For moving drone by xx distance (xx is ranged from 20 to 500cm): 
-        - up xx 
-        - down xx 
-        - left xx 
+    2. For moving drone by xx distance (xx is ranged from 20 to 500cm):
+        - up xx
+        - down xx
+        - left xx
         - right xx
         - forward xx
         - back xx
     3. For rotating drone by x much degree (xx is from 1 to 3600degree):
-        - cw xx (clockwise rotation) 
+        - cw xx (clockwise rotation)
         - ccw xx (counter-clockwise rotation)
-    4. For flipping to x direction 
+    4. For flipping to x direction
        (x has many options: l (left), r (right), f (forward), b (back)
         bl (back/left), rb (back/right), fl (front/left), fr (front/right) ):
         - flip x
@@ -123,7 +123,7 @@ def main():
     #recvThread create
     recvThread = threading.Thread(target=recv)
     recvThread.start()
-    
+
     print ('\r\n\r\nWelcome!\r\n')
 
     name_pliot = input("What is your name, pilot?")
@@ -134,41 +134,39 @@ def main():
     print ('If need command instructions, type "help command".\n')
     print ('If want to disconnect, type "end".\n')
 
-    while True: 
+    while True:
 
         try:
             if internet_on() == False:
                 print("\nSorry, it looks like you have not successfully connected to drone yet!\nPlease try again after connecting to the drone")
-                sock.close() 
+                sock.close()
                 break
             else:
                 pass
-                
+
             msg = input("")
-                
+
             if not msg:
-                break  
-            
+                break
+
             if msg == "help command":
                 print(help_command())
 
             if 'end' in msg:
                 print ('...')
-                sock.close()  
+                sock.close()
                 break
 
-            
+
             # Send data
-            msg = msg.encode(encoding="utf-8") 
+            msg = msg.encode(encoding="utf-8")
             sent = sock.sendto(msg, tello_address)
-        
+
         except KeyboardInterrupt:
             print ('\n . . .\n')
-            sock.close()  
+            sock.close()
             break
 
 
 if __name__ == "__main__":
     main()
-
-
