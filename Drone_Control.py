@@ -8,6 +8,7 @@ import time
 import pytest
 from datetime import date
 import sys
+import sqlite3
 
 host = ''
 port = 9000
@@ -34,7 +35,7 @@ def recv():
 def internet_on():
     hostname = socket.gethostname()
     IPaddress = socket.gethostbyname(hostname)
-    if IPaddress == '192.168.137.1':
+    if IPaddress == '192.168.10.3':
         return True
     else:
         return False
@@ -137,6 +138,11 @@ while True:
         if msg == "help command":
             print(help_command())
 
+        if msg == "Battery?":
+            data, server = sock.recvfrom(1518)
+            returnmsg = data.decode(encoding="utf-8")
+            new_flight.battery_left(returnmsg)
+
         if 'end' in msg:
             # new_flight.battery_left()
             # new_flight.flight_total()
@@ -148,6 +154,7 @@ while True:
         # Send data
         msg = msg.encode(encoding="utf-8")
         sent = sock.sendto(msg, tello_address)
+        print("Sent is:",sent)
 
     except KeyboardInterrupt:
         print ('\n . . .\n')
