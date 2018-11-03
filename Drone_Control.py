@@ -34,7 +34,7 @@ def recv():
 def internet_on():
     hostname = socket.gethostname()
     IPaddress = socket.gethostbyname(hostname)
-    if IPaddress == '192.168.10.2':
+    if IPaddress == '192.168.137.1':
         return True
     else:
         return False
@@ -110,10 +110,20 @@ print ('\nIf need command instructions, type "help command".\n')
 print ('If you type something not in the command instruction, nothing will happen.\n')
 time.sleep(2)
 print ('\nIf want to disconnect, type "end".\n')
-print('Enjoy~')
+print('Enjoy~\n')
 time.sleep(2)
 
-list_command = set()
+while True:
+    msg = input("")
+    if  msg == "command":
+        msg = msg.encode(encoding="utf-8")
+        sent = sock.sendto(msg, tello_address)
+        break
+    else:
+        print("please type 'command' first\n")
+
+new_flight = flight(battery = 100) # Need to figure out how to get the drone's responding value
+
 while True:
 
     try:
@@ -124,16 +134,12 @@ while True:
 
         msg = input("")
 
-        if 'command' not in list_command:
-            list_command.add(msg)
-            new_flight = flight(battery = 100) # Need to figure out how to get the drone's responding value
-
         if msg == "help command":
             print(help_command())
 
         if 'end' in msg:
             # new_flight.battery_left()
-            # new_flight.flight_time()
+            # new_flight.flight_total()
             print ('...')
             sock.close()
             break
