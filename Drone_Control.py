@@ -32,13 +32,13 @@ def recv():
             print ('\nExit . . .\n')
             break
 
-def internet_on():
+def drone_connected():
     hostname = socket.gethostname()
     IPaddress = socket.gethostbyname(hostname)
-    if IPaddress == '192.168.10.3':
-        return True
-    else:
+    if IPaddress == '127.0.0.1': # This IP gets returned when there is no internet connection.
         return False
+    else:
+        return True
 
 @pytest.fixture()
 def help_command():
@@ -65,9 +65,9 @@ def help_command():
         - speed xx
     6. For reading the current value
        (Caution: Capital letter! Don't for question mark!):
-        - Speed?  : shows current speed
-        - Battery? : shows current battery percentage
-        - Time? : shows current flight time
+        - speed?  : shows current speed
+        - battery? : shows current battery percentage
+        - time? : shows current flight time
     """
     return instruction
 
@@ -79,164 +79,126 @@ class pilot():
 
 class flight():
     date = date.today()
-    def __init__(self,battery,flight_time=0):
+    def __init__(self,battery=None,flight_time=None):
         self.battery = battery
         self.flight_time = flight_time
     def battery_left(self,amount):
         self.battery = amount
         return self.battery
     def flight_total(self,amount):
-        self.flight_time += amount
+        self.flight_time = amount
         return self.flight_time
 
-# def main():
-if internet_on() == False:
-    print("\nSorry, it looks like you have not successfully connected to drone yet!\nPlease try again after connecting to the drone")
-    sock.close()
-    sys.exit()
-
-#recvThread create
-recvThread = threading.Thread(target=recv)
-recvThread.start()
-
-print ('\r\n\r\nWelcome!\r\n')
-
-name_pliot = input("What is your name, pilot? ")
-print("Hello,",name_pliot +". Let's have some fun with the drone!\n")
-new_pilot = pilot(name_pliot)
-print ('\nPlease type "command" to start commanding the drone.\n')
-print ('Once the command interpreter returns "OK", type any command lines.\n')
-time.sleep(2)
-print ('\nIf need command instructions, type "help command".\n')
-print ('If you type something not in the command instruction, nothing will happen.\n')
-time.sleep(2)
-print ('\nIf want to disconnect, type "end".\n')
-print('Enjoy~\n')
-time.sleep(2)
-
-while True:
-    msg = input("")
-    if  msg == "command":
-        msg = msg.encode(encoding="utf-8")
-        sent = sock.sendto(msg, tello_address)
-        break
-    else:
-        print("please type 'command' first\n")
-
-new_flight = flight(battery = 100) # Need to figure out how to get the drone's responding value
-
-while True:
-
-    try:
-        if internet_on() == False:
-            print("\nSorry, it looks like you lost connection!\nPlease try again after connecting to the drone")
-            sock.close()
-            break
-
-        msg = input("")
-
-        if msg == "help command":
-            print(help_command())
-
-        if msg == "Battery?":
-            data, server = sock.recvfrom(1518)
-            returnmsg = data.decode(encoding="utf-8")
-            new_flight.battery_left(returnmsg)
-
-        if 'end' in msg:
-            # new_flight.battery_left()
-            # new_flight.flight_total()
-            print ('...')
-            sock.close()
-            break
-
-        print("\nplease type any command lines.")
-        # Send data
-        msg = msg.encode(encoding="utf-8")
-        sent = sock.sendto(msg, tello_address)
-        print("Sent is:",sent)
-
-    except KeyboardInterrupt:
-        print ('\n . . .\n')
+def main():
+    if drone_connected() == False:
+        print("\nSorry, it looks like you have not successfully connected to drone yet!\nPlease try again after connecting to the drone")
         sock.close()
-        break
+        sys.exit()
 
-print("I hope you enjoyed flying drone," + new_pilot.name)
+    #recvThread create
+    recvThread = threading.Thread(target=recv)
+    recvThread.start()
 
-flight_metadata = {"Pilot_Name":new_pilot.name , "Flight_Note":None, 'Temp':None, 'Location':None, 'Time':new_flight.date}
+    print ('\r\n\r\nWelcome!\r\n')
 
-flightnote = input('If you want to record flight note, type here. If not, press enter. ')
-temperature = input('If you want to record the temperature(°F) right now, type here. If not, press enter. ')
-location = input('If you want to record the location where you flied drone, type here. If not, press enter. ')
+    name_pliot = input("What is your name, pilot? ")
+    print("Hello,",name_pliot +". Let's have some fun with the drone!\n")
+    new_pilot = pilot(name_pliot)
+    new_flight = flight()
+    print ('\nPlease type "command" to start commanding the drone.\n')
+    print ('Once the command interpreter returns "OK", type any command lines.\n')
+    time.sleep(2)
+    print ('\nIf need command instructions, type "help command".\n')
+    print ('If you type something not in the command instruction, nothing will happen.\n')
+    time.sleep(2)
+    print ('\nIf want to disconnect, type "end".\n')
+    time.sleep(2)
 
-flight_metadata["Flight_Note"] = flightnote
-flight_metadata["Temp"] = temperature
-flight_metadata["Location"] = location
+    while True:
+        mode_select = input("Which mode do you want to use, automatic or manual?\nType either 'a' for automatic or 'm' for manual: ")
 
-### DATABASE STORAGE ###
-import sqlite3
+        if mode_select == 'a':
+            print("\nYou selected 'automatic mode'! Please type 'command' to start.")
+            while True:
+                msg = input("")
+                if  msg == "command":
+                    msg = msg.encode(encoding="utf-8")
+                    sent = sock.sendto(msg, tello_address)
+                    break
+                else:
+                    print("please type 'command' first\n")
 
-conn = sqlite3.connect("Drone_Database.db")
+            while True:
 
-cur = conn.cursor()
+                try:
+                    # if drone_connected() == False:
+                    #     print("\nSorry, it looks like you lost connection!\nPlease try again after connecting to the drone")
+                    #     sock.close()
+                    #     break
 
-res = cur.execute("SELECT name FROM sqlite_master WHERE type='table';")
-table_list = cur.fetchall()
-for table in table_list:
-    if 'flight_metadata' not in table:
-        cur.execute('CREATE TABLE flight_metadata (Pilot_Name, Flight_Note, Temperature, Location, Date)')
+                    msg = input("")
 
-values = tuple(flight_metadata.values())
-cur.execute('INSERT INTO flight_metadata values(?,?,?,?,?)', values)
+                    if msg == "help command":
+                        print(help_command())
 
-conn.commit()
+                    if 'end' in msg:
+                        # new_flight.battery_left()
+                        # new_flight.flight_total()
+                        print ('...')
+                        sock.close()
+                        break
 
+                    # Send data
+                    msg = msg.encode(encoding="utf-8")
+                    sent = sock.sendto(msg, tello_address)
 
-# if __name__ == "__main__":
-#     main()
+                    print("\nplease type any command lines.")
 
+                except KeyboardInterrupt:
+                    print ('\n . . .\n')
+                    sock.close()
+                    break
 
+            print("I hope you enjoyed flying drone," + new_pilot.name)
 
+            flight_metadata = {"Pilot_Name":new_pilot.name , "Flight_Note":None, 'Temp':None, 'Location':None, 'Time':new_flight.date}
 
+            flightnote = input('If you want to record flight note, type here. If not, press enter. ')
+            temperature = input('If you want to record the temperature(°F) right now, type here. If not, press enter. ')
+            location = input('If you want to record the location where you flied drone, type here. If not, press enter. ')
 
+            flight_metadata["Flight_Note"] = flightnote
+            flight_metadata["Temp"] = temperature
+            flight_metadata["Location"] = location
 
+            ### DATABASE STORAGE ###
 
+            conn = sqlite3.connect("Drone_Database.db")
 
+            cur = conn.cursor()
 
+            res = cur.execute("SELECT name FROM sqlite_master WHERE type='table';")
+            table_list = cur.fetchall()
+            if len(table_list) == 0:
+                cur.execute('CREATE TABLE flight_metadata (Pilot_Name, Flight_Note, Temperature, Location, Date)')
+            else:
+                for table in table_list:
+                    if 'flight_metadata' not in table:
+                        cur.execute('CREATE TABLE flight_metadata (Pilot_Name, Flight_Note, Temperature, Location, Date)')
 
+            values = tuple(flight_metadata.values())
+            cur.execute('INSERT INTO flight_metadata values(?,?,?,?,?)', values)
 
+            conn.commit()
+            break
 
+        elif mode_select == 'm':
+            print("\nSorry, this mode is currently under development.")
+            sock.close()
+            break
 
+        else:
+            print("\nWrong command! Please Type again\n")
 
-
-
-
-##### Testing Begins #####
-
-# @pytest.fixture()
-# def object_instance():
-#     pilot1 = pilot('th')
-#     flight1 = flight(100)
-#     return [pilot1, flight1]
-
-# def test_name_of_pilot(object_instance):
-#     assert object_instance[0].name == 'th'
-
-# def test_battery_func_of_filght(object_instance):
-#     amount = 30
-#     assert object_instance[1].battery_left(amount) == 100 - amount
-
-# @pytest.mark.xfail(reason = 'The variable that is compared to flight.date is intentionally set to an incorrect date')
-# def test_date_flight(object_instance):
-#     random_date = date(2018,10,12)
-#     assert object_instance[1].date == random_date
-
-# def test_instruction_takeoff(help_command):
-#     "This function tests if there is an instruction for takeoff command"
-#     assert 'takeoff' in help_command
-
-# @pytest.mark.xfail(reason = 'It is not connected to drone ip')
-# def test_internet_on():
-#     assert internet_on == True
-
-##### Testing ends #####
+if __name__ == "__main__":
+    main()
