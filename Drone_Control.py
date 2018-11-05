@@ -32,13 +32,16 @@ def recv():
             print ('\nExit . . .\n')
             break
 
+@pytest.fixture()
 def drone_connected():
     hostname = socket.gethostname()
     IPaddress = socket.gethostbyname(hostname)
-    if IPaddress == '127.0.0.1': # This IP gets returned when there is no internet connection.
-        return False
-    else:
+    if IPaddress[0:10] == '192.168.10':
         return True
+    # if IPaddress == '127.0.0.1': # This IP gets returned when there is no internet connection.
+        # return False
+    else:
+        return False
 
 @pytest.fixture()
 def help_command():
@@ -91,7 +94,7 @@ class flight():
 
 def main():
     if drone_connected() == False:
-        print("\nSorry, it looks like you have not successfully connected to drone yet!\nPlease try again after connecting to the drone")
+        print("\nSorry, it looks like you have not successfully connected to the drone yet!\nPlease try again after connecting to the drone")
         sock.close()
         sys.exit()
 
@@ -101,24 +104,24 @@ def main():
 
     print ('\r\n\r\nWelcome!\r\n')
 
-    name_pliot = input("What is your name, pilot? ")
-    print("Hello,",name_pliot +". Let's have some fun with the drone!\n")
-    new_pilot = pilot(name_pliot)
+    name_pilot = input("What is your name, pilot? ")
+    print("Hello,",name_pilot +". Let's have some fun with the drone!\n")
+    new_pilot = pilot(name_pilot)
     new_flight = flight()
     print ('\nPlease type "command" to start commanding the drone.\n')
     print ('Once the command interpreter returns "OK", type any command lines.\n')
-    time.sleep(2)
+    time.sleep(1)
     print ('\nIf need command instructions, type "help command".\n')
     print ('If you type something not in the command instruction, nothing will happen.\n')
-    time.sleep(2)
+    time.sleep(1)
     print ('\nIf want to disconnect, type "end".\n')
-    time.sleep(2)
+    time.sleep(1)
 
     while True:
         mode_select = input("Which mode do you want to use, automatic or manual?\nType either 'a' for automatic or 'm' for manual: ")
 
-        if mode_select == 'a':
-            print("\nYou selected 'automatic mode'! Please type 'command' to start.")
+        if mode_select == 'm':
+            print("\nYou selected 'manual mode'! Please type 'command' to start.")
             while True:
                 msg = input("")
                 if  msg == "command":
@@ -151,7 +154,7 @@ def main():
                     # Send data
                     msg = msg.encode(encoding="utf-8")
                     sent = sock.sendto(msg, tello_address)
-
+                    time.sleep(2)
                     print("\nplease type any command lines.")
 
                 except KeyboardInterrupt:
@@ -192,7 +195,7 @@ def main():
             conn.commit()
             break
 
-        elif mode_select == 'm':
+        elif mode_select == 'a':
             print("\nSorry, this mode is currently under development.")
             sock.close()
             break
