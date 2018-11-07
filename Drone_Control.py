@@ -138,9 +138,9 @@ def main():
 
         # If the user selects manual mode, it will go down here.
         if mode_select == 'm':
-            print("\nYou selected 'manual mode'! Please type 'command' to start.")
+            print("\nYou selected 'manual mode'!")
             while True:
-                msg = input("")
+                msg = input("\nPlease type 'command' to start: ")
                 # The user fisrt need to type "command" to start.
                 # Until "command" is typed, the while loop will be continued.
                 if  msg == "command":
@@ -148,7 +148,7 @@ def main():
                     sent = sock.sendto(msg, tello_address)
                     break
                 else:
-                    print("please type 'command' first\n")
+                    print("\nWrong command!")
 
             while True:
 
@@ -184,7 +184,7 @@ def main():
                     sock.close()
                     break
 
-            print("I hope you enjoyed flying drone," + new_pilot.name)
+            print("I hope you enjoyed flying drone, " + new_pilot.name)
 
             # Once the user is done playing with the drone, there are a few quesitons that will be asked to record some information.
             # The info will be saved in the form of dictionary and the variable "flight_metadata" will indicate the location to those info.
