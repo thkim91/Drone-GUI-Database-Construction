@@ -105,10 +105,10 @@ class flight():
 # From here, the main function starts and the user actually gets to see in the command line.
 def main():
     # Fisrt, the function will automatically check if the user's PC is well connected to the drone.
-    if drone_connected() == False:
-        print("\nSorry, it looks like you have not successfully connected to the drone yet!\nPlease try again after connecting to the drone")
-        sock.close()
-        sys.exit()
+    # if drone_connected() == False:
+    #     print("\nSorry, it looks like you have not successfully connected to the drone yet!\nPlease try again after connecting to the drone")
+    #     sock.close()
+    #     sys.exit()
 
     # Here, PC is getting ready to send to and receive from the drone.
     #recvThread create
@@ -153,10 +153,10 @@ def main():
             while True:
 
                 try:
-                    if drone_connected() == False:
-                        print("\nSorry, it looks like you lost connection!\nPlease try again after connecting to the drone")
-                        sock.close()
-                        break
+                    # if drone_connected() == False:
+                    #     print("\nSorry, it looks like you lost connection!\nPlease try again after connecting to the drone")
+                    #     sock.close()
+                    #     break
 
                     # Now the user can do the any commands such as takeoff and land.
                     msg = input("\nplease type any command lines: ")
