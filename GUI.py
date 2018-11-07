@@ -3,11 +3,18 @@ from tkinter import *
 ManWindow = None
 mainProgram = None
 root = None
+BGCOLOR = '#2095f5'
 
 def showManWindow():
     #mainProgram.destroy()
     ManWindow = Tk()
+    droneBattLevel = 100
     #Label 1
+    labelmw = Label(ManWindow,text = 'Control the Drone!')
+    labelmw.config(background=BGCOLOR)
+
+    labelmw.pack()
+    labelmw.config(justify = CENTER)
 
     button5 = Button(ManWindow, text = 'Drone Takeoff')
     button5.pack() 
@@ -41,10 +48,12 @@ def showManWindow():
     button12.pack() 
     button12.config(command = BackToPrevPage)
     
-    button13 = Button(ManWindow, text = 'Battery: 100%')
+    battText = 'Battery: ' + str(droneBattLevel) + "%"
+    button13 = Button(ManWindow, text = battText)
     button13.pack() 
 
-    ManWindow.geometry("200x250")
+    ManWindow.geometry("200x290")
+    ManWindow.config(background=BGCOLOR)
     ManWindow.mainloop()
                     
 def showFlightSelectionPage():
@@ -59,6 +68,7 @@ def showFlightSelectionPage():
     button4.pack() 
     button4.config(command = showManWindow)
     mainProgram.geometry("200x120")
+    mainProgram.config(background=BGCOLOR)
     mainProgram.mainloop()
     
 def DroneTakeoff():
@@ -107,11 +117,22 @@ def login():
                 return 0
     print("User was not found")
     
-    
+
 root = Tk()
-root.geometry("200x120")
+root.config(background=BGCOLOR)
+root.geometry("200x150")
+
+label0 = Label(root,text = 'Python Pilots')
+label0.config(background=BGCOLOR)
+
+label0.pack()
+label0.config(justify = CENTER)
+label0.config(font=("Courier", 15))
+
 #Label 1
 label1 = Label(root,text = 'Username')
+label1.config(background=BGCOLOR)
+
 label1.pack()
 label1.config(justify = CENTER)
 
@@ -119,6 +140,7 @@ entry1 = Entry(root, width = 30)
 entry1.pack()
 
 label3 = Label(root, text="Password")
+label3.config(background=BGCOLOR)
 label3.pack()
 label1.config(justify = CENTER)
 
@@ -127,3 +149,6 @@ entry2.pack()
 
 button1 = Button(root, text = 'Login!', bg="sky blue")
 button1.pack() 
+button1.config(command = login)
+
+root.mainloop()
