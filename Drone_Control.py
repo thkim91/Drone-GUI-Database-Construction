@@ -25,7 +25,7 @@ tello_address = ('192.168.10.1', 8889)
 sock.bind(locaddr)
 
 def recv():
-    # This function decodes the message that the drone sends to the user.
+    # This function decodes the message that the drone sends to PC.
     count = 0
     while True:
         try:
@@ -51,7 +51,7 @@ def drone_connected():
 @pytest.fixture()
 def help_command():
     # This function shows the instruction of all the commands for the drone.
-    # This would be helpful to the user who does not know the command.
+    # This would be helpful especially to the user who does not know the command.
     instruction = """
     Here are the commands that you can use:
     1. For auto takeoff and land:
@@ -102,9 +102,10 @@ class flight():
         self.flight_time = amount
         return self.flight_time
 
+
 # From here, the main function starts and the user actually gets to see in the command line.
 def main():
-    # Fisrt, the function will automatically check if the user's PC is well connected to the drone.
+    # Fisrt, the software will automatically check if the user's PC is well connected to the drone.
     if drone_connected() == False:
         print("\nSorry, it looks like you have not successfully connected to the drone yet!\nPlease try again after connecting to the drone")
         sock.close()
@@ -150,6 +151,7 @@ def main():
                 else:
                     print("\nWrong command!")
 
+            time.sleep(1)
             while True:
 
                 try:
@@ -159,9 +161,10 @@ def main():
                         break
 
                     # Now the user can do the any commands such as takeoff and land.
-                    msg = input("\nplease type any command lines: ")
+                    print("\nplease type any command lines below:")
+                    msg = input("")
 
-                    # The user can learn the kinds of commands here if type help command.
+                    # if the user types help command, the software shows all the commands.
                     if msg == "help command":
                         print(help_command())
 
@@ -177,7 +180,8 @@ def main():
                     # Then the encoded message is sent to the drone through the socket.
                     msg = msg.encode(encoding="utf-8")
                     sent = sock.sendto(msg, tello_address)
-                    time.sleep(2)
+                    # Since it takes a few second to get message from drone, we wait for 5s before the next command
+                    time.sleep(6)
 
                 except KeyboardInterrupt:
                     print ('\n . . .\n')
@@ -207,7 +211,7 @@ def main():
             res = cur.execute("SELECT name FROM sqlite_master WHERE type='table';")
             table_list = cur.fetchall()
             # Fisrt, the table will be made if there is no table.
-            # There are five attributes for now, but there may be more later on.
+            # There are five attributes in the table for now, but there may be more later on.
             if len(table_list) == 0:
                 cur.execute('CREATE TABLE flight_metadata (Pilot_Name, Flight_Note, Temperature, Location, Date)')
             else:
@@ -220,9 +224,10 @@ def main():
             cur.execute('INSERT INTO flight_metadata values(?,?,?,?,?)', values)
 
             conn.commit()
+            # Here is the end of the software when manual mode is selected.
             break
 
-        # Beofre, if the user selects atomatic mode, the code will directly come down here and break
+        # If the user selects atomatic mode before, the code will directly come down here and break
         # because the mode is under development now.
         elif mode_select == 'a':
             print("\nSorry, this mode is currently under development.")
