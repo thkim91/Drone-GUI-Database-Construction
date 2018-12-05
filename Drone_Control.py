@@ -82,7 +82,7 @@ def help_command():
     return instruction
 
 def Drone_Start(msg):
-    if  msg == "command":
+    if msg == "command":
         msg = msg.encode(encoding="utf-8")
         sent = sock.sendto(msg, tello_address)
         return True
@@ -100,6 +100,9 @@ def Drone_Excecute(command):
         except KeyboardInterrupt:
             # print ('\n . . .\n')
             sock.close()
+
+def Drone_end():
+    sock.close()
 
 def Record_Database(pilot_name = None, flightnote = None, temperature = None, location = None, flight_date = None):
     ### DATABASE STORAGE ###
@@ -125,8 +128,8 @@ def Record_Database(pilot_name = None, flightnote = None, temperature = None, lo
 
     conn.commit()
 
-    cur.execute("SELECT * FROM flight_metadata ORDER BY Date DESC LIMIT 1")
-    return cur.fetchone()
+    cur.execute("SELECT * FROM flight_metadata")
+    return cur.fetchall()
 # These two classes below allow to have a class instance for the pilot and flight.
 # The pilot instance may have more functions later on, but now the name can be saved.
 # For the flight instance, there are two method functions, which are used to save the amount of battery left and total flight time.

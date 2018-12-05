@@ -194,6 +194,7 @@ def DoneFlight(username):
 
     def button_database():
         endFlight.destroy()
+        dp.Drone_end()
         DatabasePage(username)
 
     label1 = Label(endFlight,text = 'Hope you enjoyed the flight!')
@@ -292,13 +293,14 @@ def login():
     for i in range(0, len(possible_logins)):
         if possible_logins[i][0] == username:
             if possible_logins[i][1] == password:
-                # if dp.drone_connected():
-                print("Login Successful")
-                root.destroy()
-                showFlightSelectionPage(username)
-                return 0
-                # else:
-                #     messagebox.showerror("Error", "Drone is not connected!")
+                if dp.drone_connected():
+                    print("Login Successful")
+                    root.destroy()
+                    showFlightSelectionPage(username)
+                    return 0
+                else:
+                    messagebox.showerror("Error", "Drone is not connected!")
+                    return 0
             else:
                 messagebox.showerror("Error","Incorrect password")
                 return 0
@@ -335,5 +337,3 @@ button1 = Button(root, text = 'Login', bg="sky blue", command = login)
 button1.pack()
 
 root.mainloop()
-
-# sock.close()
