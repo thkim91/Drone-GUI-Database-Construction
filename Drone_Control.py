@@ -26,13 +26,13 @@ sock.bind(locaddr)
 
 def recv():
     # This function decodes the message that the drone sends to PC.
-    count = 0
+    # count = 0
     while True:
         try:
             data, server = sock.recvfrom(1518)
-            print(data.decode(encoding="utf-8"))
+            # print(data.decode(encoding="utf-8"))
         except Exception:
-            print ('\nExit . . .\n')
+            # print ('\nExit . . .\n')
             break
 
 @pytest.fixture()
@@ -81,6 +81,52 @@ def help_command():
     """
     return instruction
 
+def Drone_Start(msg):
+    if  msg == "command":
+        msg = msg.encode(encoding="utf-8")
+        sent = sock.sendto(msg, tello_address)
+        return True
+    else:
+        # print("\nWrong command!")
+        return False
+
+def Drone_Excecute(command):
+    msg_list = command.split(',')
+    for msg in msg_list:
+        try:
+            msg = msg.encode(encoding="utf-8")
+            sent = sock.sendto(msg, tello_address)
+            time.sleep(5)
+        except KeyboardInterrupt:
+            # print ('\n . . .\n')
+            sock.close()
+
+def Record_Database(pilot_name = None, flightnote = None, temperature = None, location = None, flight_date = None):
+    ### DATABASE STORAGE ###
+    # We used database called SQlite3 to save the info.
+    conn = sqlite3.connect("Drone_Database.db")
+
+    cur = conn.cursor()
+
+    res = cur.execute("SELECT name FROM sqlite_master WHERE type='table';")
+    table_list = cur.fetchall()
+    # Fisrt, the table will be made if there is no table.
+    # There are five attributes in the table for now, but there may be more later on.
+    if len(table_list) == 0:
+        cur.execute('CREATE TABLE flight_metadata (Pilot_Name, Flight_Note, Temperature, Location, Date)')
+    else:
+        for table in table_list:
+            if 'flight_metadata' not in table:
+                cur.execute('CREATE TABLE flight_metadata (Pilot_Name, Flight_Note, Temperature, Location, Date)')
+
+    values = (pilot_name, flightnote, temperature, location, flight_date)
+    # Then the info will be inserted into the table.
+    cur.execute('INSERT INTO flight_metadata values(?,?,?,?,?)', values)
+
+    conn.commit()
+
+    cur.execute("SELECT * FROM flight_metadata ORDER BY Date DESC LIMIT 1")
+    return cur.fetchone()
 # These two classes below allow to have a class instance for the pilot and flight.
 # The pilot instance may have more functions later on, but now the name can be saved.
 # For the flight instance, there are two method functions, which are used to save the amount of battery left and total flight time.
@@ -104,139 +150,111 @@ class flight():
 
 
 # From here, the main function starts and the user actually gets to see in the command line.
-def main():
+# def main():
     # Fisrt, the software will automatically check if the user's PC is well connected to the drone.
-    if drone_connected() == False:
-        print("\nSorry, it looks like you have not successfully connected to the drone yet!\nPlease try again after connecting to the drone")
-        sock.close()
-        sys.exit()
+    # if drone_connected() == False:
+    #     print("\nSorry, it looks like you have not successfully connected to the drone yet!\nPlease try again after connecting to the drone")
+    #     sock.close()
+    #     sys.exit()
 
     # Here, PC is getting ready to send to and receive from the drone.
-    #recvThread create
-    recvThread = threading.Thread(target=recv)
-    recvThread.start()
+    # #recvThread create
+    # recvThread = threading.Thread(target=recv)
+    # recvThread.start()
 
     # Once the connection is made successfully, the software shows these lines below. The lines will be shown in the Demo again.
-    print ('\r\n\r\nWelcome!\r\n')
+    # print ('\r\n\r\nWelcome!\r\n')
 
-    name_pilot = input("What is your name, pilot? ")
-    print("Hello,",name_pilot +". Let's have some fun with the drone!\n")
-    # Here, the class instances are made.
-    new_pilot = pilot(name_pilot)
-    new_flight = flight()
-    print ('\nPlease type "command" to start commanding the drone.\n')
-    print ('Once the command interpreter returns "OK", type any command lines.\n')
-    time.sleep(1)
-    print ('\nIf need command instructions, type "help command".\n')
-    print ('If you type something not in the command instruction, nothing will happen.\n')
-    time.sleep(1)
-    print ('\nIf want to disconnect, type "end".\n')
-    time.sleep(1)
+    # name_pilot = input("What is your name, pilot? ")
+    # print("Hello,",name_pilot +". Let's have some fun with the drone!\n")
+    # # Here, the class instances are made.
+    # new_pilot = pilot(name_pilot)
+    # new_flight = flight()
+    # print ('\nPlease type "command" to start commanding the drone.\n')
+    # print ('Once the command interpreter returns "OK", type any command lines.\n')
+    # time.sleep(1)
+    # print ('\nIf need command instructions, type "help command".\n')
+    # print ('If you type something not in the command instruction, nothing will happen.\n')
+    # time.sleep(1)
+    # print ('\nIf want to disconnect, type "end".\n')
+    # time.sleep(1)
 
-    while True:
-        # Here, the user gets to choose which mode they would like to use.
-        mode_select = input("Which mode do you want to use, automatic or manual?\nType either 'a' for automatic or 'm' for manual: ")
+    # while True:
+    #     # Here, the user gets to choose which mode they would like to use.
+    #     mode_select = input("Which mode do you want to use, automatic or manual?\nType either 'a' for automatic or 'm' for manual: ")
 
-        # If the user selects manual mode, it will go down here.
-        if mode_select == 'm':
-            print("\nYou selected 'manual mode'!")
-            while True:
-                msg = input("\nPlease type 'command' to start: ")
-                # The user fisrt need to type "command" to start.
-                # Until "command" is typed, the while loop will be continued.
-                if  msg == "command":
-                    msg = msg.encode(encoding="utf-8")
-                    sent = sock.sendto(msg, tello_address)
-                    break
-                else:
-                    print("\nWrong command!")
+    #     # If the user selects manual mode, it will go down here.
+    #     if mode_select == 'm':
+    #         print("\nYou selected 'manual mode'!")
 
-            time.sleep(1)
-            while True:
+    #         while True:
+    #             msg = input("\nPlease type 'command' to start: ")
+    #             if Drone_Start(msg) == True:
+    #                 break
+    #             else:
+    #                 continue
 
-                try:
-                    if drone_connected() == False:
-                        print("\nSorry, it looks like you lost connection!\nPlease try again after connecting to the drone")
-                        sock.close()
-                        break
+    #         time.sleep(1)
 
-                    # Now the user can do the any commands such as takeoff and land.
-                    print("\nplease type any command lines below:")
-                    msg = input("")
+    #         while True:
+    #             # if drone_connected() == False:
+    #             #     print("\nSorry, it looks like you lost connection!\nPlease try again after connecting to the drone")
+    #             #     sock.close()
+    #             #     break
 
-                    # if the user types help command, the software shows all the commands.
-                    if msg == "help command":
-                        print(help_command())
+    #             print("\nplease type any command lines below:")
+    #             msg = input()
 
-                    # Once the user is done, he/she should type "end" to finish the program.
-                    if 'end' in msg:
-                        # new_flight.battery_left()
-                        # new_flight.flight_total()
-                        print ('...')
-                        sock.close()
-                        break
+    #             if msg == "help command":
+    #                 print(help_command())
+    #                 continue
 
-                    # Here, the command that the user typed is encoded so that the drone could understand it.
-                    # Then the encoded message is sent to the drone through the socket.
-                    msg = msg.encode(encoding="utf-8")
-                    sent = sock.sendto(msg, tello_address)
-                    # Since it takes a few second to get message from drone, we wait for 5s before the next command
-                    time.sleep(6)
+    #             if msg == "end":
+    #                 print ('...')
+    #                 sock.close()
+    #                 break
 
-                except KeyboardInterrupt:
-                    print ('\n . . .\n')
-                    sock.close()
-                    break
+    #             Drone_Excecute(msg)
 
-            print("I hope you enjoyed flying drone, " + new_pilot.name)
+    #         print("I hope you enjoyed flying drone, " + new_pilot.name)
 
-            # Once the user is done playing with the drone, there are a few quesitons that will be asked to record some information.
-            # The info will be saved in the form of dictionary and the variable "flight_metadata" will indicate the location to those info.
-            flight_metadata = {"Pilot_Name":new_pilot.name , "Flight_Note":None, 'Temp':None, 'Location':None, 'Time':new_flight.date}
+    #         flightnote = input('If you want to record flight note, type here. If not, press enter. ')
+    #         temperature = input('If you want to record the temperature(°F) right now, type here. If not, press enter. ')
+    #         location = input('If you want to record the location where you flied drone, type here. If not, press enter. ')
 
-            flightnote = input('If you want to record flight note, type here. If not, press enter. ')
-            temperature = input('If you want to record the temperature(°F) right now, type here. If not, press enter. ')
-            location = input('If you want to record the location where you flied drone, type here. If not, press enter. ')
+    #         Record_Database(new_pilot.name, flightnote, temperature, location, new_flight.date)
 
-            flight_metadata["Flight_Note"] = flightnote
-            flight_metadata["Temp"] = temperature
-            flight_metadata["Location"] = location
+    #         # Here is the end of the software when manual mode is selected.
+    #         break
 
-            ### DATABASE STORAGE ###
-            # We used database called SQlite3 to save the info.
-            conn = sqlite3.connect("Drone_Database.db")
+    #     # If the user selects atomatic mode before, the code will directly come down here and break
+    #     # because the mode is under development now.
+    #     elif mode_select == 'a':
+    #         print("You selected 'automatic mode'!")
+    #         while True:
+    #             msg = input("\nPlease type 'command' to start: ")
+    #             if Drone_Start(msg) == True:
+    #                 break
+    #             else:
+    #                 continue
 
-            cur = conn.cursor()
+    #         time.sleep(1)
 
-            res = cur.execute("SELECT name FROM sqlite_master WHERE type='table';")
-            table_list = cur.fetchall()
-            # Fisrt, the table will be made if there is no table.
-            # There are five attributes in the table for now, but there may be more later on.
-            if len(table_list) == 0:
-                cur.execute('CREATE TABLE flight_metadata (Pilot_Name, Flight_Note, Temperature, Location, Date)')
-            else:
-                for table in table_list:
-                    if 'flight_metadata' not in table:
-                        cur.execute('CREATE TABLE flight_metadata (Pilot_Name, Flight_Note, Temperature, Location, Date)')
+    #         command = input("\nType every command that you want to execute.\nBetween the command type comma without space\nex) takeoff,right20,land")
+    #         Drone_Excecute(command)
+    #         sock.close()
 
-            values = tuple(flight_metadata.values())
-            # Then the info will be inserted into the table.
-            cur.execute('INSERT INTO flight_metadata values(?,?,?,?,?)', values)
+    #         print("I hope you enjoyed flying drone, " + new_pilot.name)
 
-            conn.commit()
-            # Here is the end of the software when manual mode is selected.
-            break
+    #         flightnote = input('If you want to record flight note, type here. If not, press enter. ')
+    #         temperature = input('If you want to record the temperature(°F) right now, type here. If not, press enter. ')
+    #         location = input('If you want to record the location where you flied drone, type here. If not, press enter. ')
 
-        # If the user selects atomatic mode before, the code will directly come down here and break
-        # because the mode is under development now.
-        elif mode_select == 'a':
-            print("\nSorry, this mode is currently under development.")
-            sock.close()
-            break
+    #         Record_Database(new_pilot.name, flightnote, temperature, location, new_flight.date)
 
-        # If the user types wrong command for selecting mode, it will ask the user to type again.
-        else:
-            print("\nWrong command! Please Type again\n")
+    #     # If the user types wrong command for selecting mode, it will ask the user to type again.
+    #     else:
+    #         print("\nWrong command! Please Type again\n")
 
-if __name__ == "__main__":
-    main()
+# if __name__ == "__main__":
+#     main()

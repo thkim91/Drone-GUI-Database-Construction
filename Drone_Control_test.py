@@ -1,5 +1,6 @@
 from Drone_Control import *
 import pytest
+from datetime import date
 
 @pytest.fixture()
 def object_instance():
@@ -37,3 +38,9 @@ def test_instruction_takeoff(help_command):
 def test_drone_connected(drone_connected):
     assert drone_connected == True
 
+def test_drone_start():
+    assert Drone_Start("command") == True
+
+def test_database_storage():
+    value = ("test","good",'75',"cgu",str(date.today()))
+    assert Record_Database(value[0],value[1],value[2],value[3],value[4]) == value
