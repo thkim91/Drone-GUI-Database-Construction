@@ -24,7 +24,7 @@ def showFlightSelectionPage(username):
         showAutoWindow(username)
     def button_man():
         mainProgram.destroy()
-        showManWindow(username)
+        BeforeStart(username)
 
     label0 = Label(mainProgram,text = 'Mode Selection')
     label0.config(background=BGCOLOR,font=("Courier", 15))
@@ -40,12 +40,12 @@ def showFlightSelectionPage(username):
     mainProgram.config(background=BGCOLOR)
     mainProgram.mainloop()
 
-def BeforeStart():
+def BeforeStart(username):
     beforestartprogram = Tk()
 
     def button_click():
         beforestartprogram.destroy()
-        StartProgram()
+        showManWindow(username)
 
     label1 = Label(beforestartprogram,text = 'Select Command to start!')
     label1.config(background=BGCOLOR,font=("Courier", 10))
@@ -65,7 +65,7 @@ def showAutoWindow(username):
         command2 = combo2.get()
         command3 = combo3.get()
         command4 = combo4.get()
-        # dp.Drone_Excecute("command,takeoff,"+command2+','+command3+','+command4+",land")
+        dp.Drone_Excecute("command,takeoff,"+command2+','+command3+','+command4+",land")
 
     def button_done():
         AutoWindow.destroy()
@@ -120,14 +120,31 @@ def showAutoWindow(username):
 
     action=Button(AutoWindow, text = 'OK',width=10, command = button_command)
     action.grid(column=1, row=7)
-    button1= Button(AutoWindow, text = 'Done',width=10, command = button_done)
-    button1.grid(column=1, row=9)
-    button2 = Button(AutoWindow, text = 'Back',width=10, command = button_back)
-    button2.grid(column=1, row=10)
+    button1= Button(AutoWindow, text = 'Instruction',width=10, command = showInstruction_auto)
+    button1.grid(column=1, row=8)
+    button2= Button(AutoWindow, text = 'Done',width=10, command = button_done)
+    button2.grid(column=1, row=9)
+    button3 = Button(AutoWindow, text = 'Back',width=10, command = button_back)
+    button3.grid(column=1, row=10)
 
     AutoWindow.geometry("300x300")
     AutoWindow.config(background=BGCOLOR)
     AutoWindow.mainloop()
+
+def showInstruction_auto():
+    InstructionPage = Tk()
+
+    label1 = Label(InstructionPage,text = 'Instructions:')
+    label1.config(background=BGCOLOR,justify = CENTER,font=("Courier", 15))
+    label1.pack()
+
+    label2 = Label(InstructionPage,text = dp.help_command_auto(),justify="left")
+    label2.config(background=BGCOLOR,font=("Courier", 12))
+    label2.pack()
+
+    InstructionPage.geometry("720x300")
+    InstructionPage.config(background=BGCOLOR)
+    InstructionPage.mainloop()
 
 def showManWindow(username):
     ManWindow = Tk()
@@ -164,7 +181,7 @@ def showManWindow(username):
     button12 = Button(ManWindow, text = 'Rotate',width=20, command = DroneRotate)
     button12.pack()
 
-    button13 = Button(ManWindow, text = 'Instruction',width=20, command = showInstruction)
+    button13 = Button(ManWindow, text = 'Instruction',width=20, command = showInstruction_man)
     button13.pack()
 
     button14 = Button(ManWindow, text = 'Done',width=10, command = button_done)
@@ -177,15 +194,18 @@ def showManWindow(username):
     ManWindow.config(background=BGCOLOR)
     ManWindow.mainloop()
 
-def showInstruction():
+def showInstruction_man():
     InstructionPage = Tk()
 
-    label1 = Label(InstructionPage,text = dp.help_command(),justify="left")
-    label1.config(background=BGCOLOR)
-    label1.config(font=("Courier", 12))
+    label1 = Label(InstructionPage,text = 'Instructions:')
+    label1.config(background=BGCOLOR,justify = CENTER,font=("Courier", 15))
     label1.pack()
 
-    InstructionPage.geometry("720x540")
+    label2 = Label(InstructionPage,text = dp.help_command_man(),justify="left")
+    label2.config(background=BGCOLOR,font=("Courier", 12))
+    label2.pack()
+
+    InstructionPage.geometry("720x300")
     InstructionPage.config(background=BGCOLOR)
     InstructionPage.mainloop()
 
@@ -293,14 +313,14 @@ def login():
     for i in range(0, len(possible_logins)):
         if possible_logins[i][0] == username:
             if possible_logins[i][1] == password:
-                if dp.drone_connected():
-                    print("Login Successful")
-                    root.destroy()
-                    showFlightSelectionPage(username)
-                    return 0
-                else:
-                    messagebox.showerror("Error", "Drone is not connected!")
-                    return 0
+                # if dp.drone_connected():
+                print("Login Successful")
+                root.destroy()
+                showFlightSelectionPage(username)
+                return 0
+                # else:
+                #     messagebox.showerror("Error", "Drone is not connected!")
+                #     return 0
             else:
                 messagebox.showerror("Error","Incorrect password")
                 return 0

@@ -43,41 +43,31 @@ def drone_connected():
     IPaddress = socket.gethostbyname(hostname)
     if IPaddress[0:10] == '192.168.10':
         return True
-    # if IPaddress == '127.0.0.1': # This IP gets returned when there is no internet connection.
-        # return False
     else:
         return False
 
 @pytest.fixture()
-def help_command():
+def help_command_man():
     # This function shows the instruction of all the commands for the drone.
-    # This would be helpful especially to the user who does not know the command.
     instruction = """
     Here are the commands that you can use:
-    1. For auto takeoff and land:
-        - takeoff
-        - land
-    2. For moving drone by xx distance (xx is ranged from 20 to 500cm):
-        - up xx
-        - down xx
-        - left xx
-        - right xx
-        - forward xx
-        - back xx
-    3. For rotating drone by x much degree (xx is from 1 to 3600degree):
-        - cw xx (clockwise rotation)
-        - ccw xx (counter-clockwise rotation)
-    4. For flipping to x direction
-       (x has many options: l (left), r (right), f (forward), b (back)
-        bl (back/left), rb (back/right), fl (front/left), fr (front/right) ):
-        - flip x
-    5. For changing the speed by x much (x is from 1 to 100cm/s)
-        - speed xx
-    6. For reading the current value
-       (Caution: Capital letter! Don't for question mark!):
-        - speed?  : shows current speed
-        - battery? : shows current battery percentage
-        - time? : shows current flight time
+    (The length of distance the drone move each time is fixed to 50cm.)
+    1. Takeoff: Drone will takeoff.
+    2. Land: Drone will land.
+    3. Left: Drone will move to the left.
+    4. Right: Drone will move to the right.
+    5. Flip: Drone will flip to the right.
+    6. Rotate: Drone will do the clockwise rotation 360 degree.
+    """
+    return instruction
+
+@pytest.fixture()
+def help_command_auto():
+    instruction = """
+    1. left 50: Drone will move 50cm to the left.
+    2. right 50: Drone will move 50cm to the right.
+    3. flip r: Drone will flip to the right.
+    4. cw 360: Drone will do clockwise rotation 360 degree.
     """
     return instruction
 
@@ -130,9 +120,7 @@ def Record_Database(pilot_name = None, flightnote = None, temperature = None, lo
 
     cur.execute("SELECT * FROM flight_metadata")
     return cur.fetchall()
-# These two classes below allow to have a class instance for the pilot and flight.
-# The pilot instance may have more functions later on, but now the name can be saved.
-# For the flight instance, there are two method functions, which are used to save the amount of battery left and total flight time.
+
 class pilot():
     count = 0
     def __init__(self,name):
@@ -150,114 +138,3 @@ class flight():
     def flight_total(self,amount):
         self.flight_time = amount
         return self.flight_time
-
-
-# From here, the main function starts and the user actually gets to see in the command line.
-# def main():
-    # Fisrt, the software will automatically check if the user's PC is well connected to the drone.
-    # if drone_connected() == False:
-    #     print("\nSorry, it looks like you have not successfully connected to the drone yet!\nPlease try again after connecting to the drone")
-    #     sock.close()
-    #     sys.exit()
-
-    # Here, PC is getting ready to send to and receive from the drone.
-    # #recvThread create
-    # recvThread = threading.Thread(target=recv)
-    # recvThread.start()
-
-    # Once the connection is made successfully, the software shows these lines below. The lines will be shown in the Demo again.
-    # print ('\r\n\r\nWelcome!\r\n')
-
-    # name_pilot = input("What is your name, pilot? ")
-    # print("Hello,",name_pilot +". Let's have some fun with the drone!\n")
-    # # Here, the class instances are made.
-    # new_pilot = pilot(name_pilot)
-    # new_flight = flight()
-    # print ('\nPlease type "command" to start commanding the drone.\n')
-    # print ('Once the command interpreter returns "OK", type any command lines.\n')
-    # time.sleep(1)
-    # print ('\nIf need command instructions, type "help command".\n')
-    # print ('If you type something not in the command instruction, nothing will happen.\n')
-    # time.sleep(1)
-    # print ('\nIf want to disconnect, type "end".\n')
-    # time.sleep(1)
-
-    # while True:
-    #     # Here, the user gets to choose which mode they would like to use.
-    #     mode_select = input("Which mode do you want to use, automatic or manual?\nType either 'a' for automatic or 'm' for manual: ")
-
-    #     # If the user selects manual mode, it will go down here.
-    #     if mode_select == 'm':
-    #         print("\nYou selected 'manual mode'!")
-
-    #         while True:
-    #             msg = input("\nPlease type 'command' to start: ")
-    #             if Drone_Start(msg) == True:
-    #                 break
-    #             else:
-    #                 continue
-
-    #         time.sleep(1)
-
-    #         while True:
-    #             # if drone_connected() == False:
-    #             #     print("\nSorry, it looks like you lost connection!\nPlease try again after connecting to the drone")
-    #             #     sock.close()
-    #             #     break
-
-    #             print("\nplease type any command lines below:")
-    #             msg = input()
-
-    #             if msg == "help command":
-    #                 print(help_command())
-    #                 continue
-
-    #             if msg == "end":
-    #                 print ('...')
-    #                 sock.close()
-    #                 break
-
-    #             Drone_Excecute(msg)
-
-    #         print("I hope you enjoyed flying drone, " + new_pilot.name)
-
-    #         flightnote = input('If you want to record flight note, type here. If not, press enter. ')
-    #         temperature = input('If you want to record the temperature(°F) right now, type here. If not, press enter. ')
-    #         location = input('If you want to record the location where you flied drone, type here. If not, press enter. ')
-
-    #         Record_Database(new_pilot.name, flightnote, temperature, location, new_flight.date)
-
-    #         # Here is the end of the software when manual mode is selected.
-    #         break
-
-    #     # If the user selects atomatic mode before, the code will directly come down here and break
-    #     # because the mode is under development now.
-    #     elif mode_select == 'a':
-    #         print("You selected 'automatic mode'!")
-    #         while True:
-    #             msg = input("\nPlease type 'command' to start: ")
-    #             if Drone_Start(msg) == True:
-    #                 break
-    #             else:
-    #                 continue
-
-    #         time.sleep(1)
-
-    #         command = input("\nType every command that you want to execute.\nBetween the command type comma without space\nex) takeoff,right20,land")
-    #         Drone_Excecute(command)
-    #         sock.close()
-
-    #         print("I hope you enjoyed flying drone, " + new_pilot.name)
-
-    #         flightnote = input('If you want to record flight note, type here. If not, press enter. ')
-    #         temperature = input('If you want to record the temperature(°F) right now, type here. If not, press enter. ')
-    #         location = input('If you want to record the location where you flied drone, type here. If not, press enter. ')
-
-    #         Record_Database(new_pilot.name, flightnote, temperature, location, new_flight.date)
-
-    #     # If the user types wrong command for selecting mode, it will ask the user to type again.
-    #     else:
-    #         print("\nWrong command! Please Type again\n")
-
-# if __name__ == "__main__":
-#     main()
