@@ -9,27 +9,40 @@ import pytest
 from datetime import date
 import sys
 import sqlite3
+# By using import method, we connected this GUI file with control functions from Drone_Control.py.
 import Drone_Control as dp
-
 from importlib import reload
 reload(dp)
 
 BGCOLOR = '#2095f5'
 
+# There are 10 different windows(pages) that we created.
+# In the beginning, the user will see the login page.
+# Once the user logs in, one will be asked to choose the flight mode.
+# Depending on which mode the user selects, one will have different ways of flying drone.
+# Near the end, database page will be shown which asks user to record some info that goes into databsae.
+# You will see the details in the demo
+
+# Using this flight mode selection page, let me explain briefly how each pages are made.
 def showFlightSelectionPage(username):
-    mainProgram = Tk()
+    mainProgram = Tk() # When building a page, it always starts with writing Tk() function.
 
     def button_auto():
+        # The current page won't be closed when moving on to next page. Therefore, using destory method, we closed the window.
         mainProgram.destroy()
+        # This allows us to go to Automatic mode page.
         showAutoWindow(username)
     def button_man():
         mainProgram.destroy()
         BeforeStart(username)
 
+    # If you want to write something in the window, use Label method.
     label0 = Label(mainProgram,text = 'Mode Selection')
     label0.config(background=BGCOLOR,font=("Courier", 15))
     label0.pack()
 
+    # If you want to make a button that execute something, use "Button" method
+    # and place the name of function that you want to exectue as the argument of command.
     button3 = Button(mainProgram, text = 'Choose Automatic Flight Plan',width=25, command = button_auto)
     button3.pack()
 
@@ -38,26 +51,11 @@ def showFlightSelectionPage(username):
 
     mainProgram.geometry("200x120")
     mainProgram.config(background=BGCOLOR)
+    # In the end, the mainloop()function should be written.
+    # This indicates that everything from TK() to here is what this page contians.
     mainProgram.mainloop()
 
-def BeforeStart(username):
-    beforestartprogram = Tk()
-
-    def button_click():
-        beforestartprogram.destroy()
-        showManWindow(username)
-
-    label1 = Label(beforestartprogram,text = 'Select Command to start!')
-    label1.config(background=BGCOLOR,font=("Courier", 10))
-    label1.pack()
-
-    button1 = Button(beforestartprogram, text = 'Command', command = button_click)
-    button1.pack()
-
-    beforestartprogram.geometry("300x120")
-    beforestartprogram.config(background=BGCOLOR)
-    beforestartprogram.mainloop()
-
+# This function represents automatic mode page.
 def showAutoWindow(username):
     AutoWindow = Tk()
 
@@ -131,6 +129,7 @@ def showAutoWindow(username):
     AutoWindow.config(background=BGCOLOR)
     AutoWindow.mainloop()
 
+# This function displays instruction of automatic mode.
 def showInstruction_auto():
     InstructionPage = Tk()
 
@@ -146,6 +145,7 @@ def showInstruction_auto():
     InstructionPage.config(background=BGCOLOR)
     InstructionPage.mainloop()
 
+# This function shows the manual mode page.
 def showManWindow(username):
     ManWindow = Tk()
 
@@ -194,6 +194,26 @@ def showManWindow(username):
     ManWindow.config(background=BGCOLOR)
     ManWindow.mainloop()
 
+# This where user is asked to click "command" button to start the drone.
+def BeforeStart(username):
+    beforestartprogram = Tk()
+
+    def button_click():
+        beforestartprogram.destroy()
+        showManWindow(username)
+
+    label1 = Label(beforestartprogram,text = 'Select Command to start!')
+    label1.config(background=BGCOLOR,font=("Courier", 10))
+    label1.pack()
+
+    button1 = Button(beforestartprogram, text = 'Command', command = button_click)
+    button1.pack()
+
+    beforestartprogram.geometry("300x120")
+    beforestartprogram.config(background=BGCOLOR)
+    beforestartprogram.mainloop()
+
+# This function displays instruction of manual mode.
 def showInstruction_man():
     InstructionPage = Tk()
 
@@ -209,6 +229,7 @@ def showInstruction_man():
     InstructionPage.config(background=BGCOLOR)
     InstructionPage.mainloop()
 
+# This functions shows that the flight is done and lets the user to move to the database page.
 def DoneFlight(username):
     endFlight = Tk()
 
@@ -228,6 +249,7 @@ def DoneFlight(username):
     endFlight.config(background=BGCOLOR)
     endFlight.mainloop()
 
+# This function displays database page where user can record some info.
 def DatabasePage(username):
     DatabaseProgram = Tk()
     def button_record():
@@ -270,6 +292,7 @@ def DatabasePage(username):
     button1.grid(row=6,column=1)
     DatabaseProgram.mainloop()
 
+# When everything is done, user will see the page where it says "thank you"
 def DoneProgram():
     endProgram = Tk()
 
@@ -305,7 +328,7 @@ def DroneRotate():
     dp.Drone_Excecute("cw 360")
 
 ###############################
-
+# This is the login page where the GUI starts.
 def login():
     possible_logins = [("Test", "test"),("Taehoon","taehoon"),("Bill","bill"),("Charidy","charidy"),("Siyu","siyu")]
     username = entry1.get()
@@ -313,14 +336,14 @@ def login():
     for i in range(0, len(possible_logins)):
         if possible_logins[i][0] == username:
             if possible_logins[i][1] == password:
-                # if dp.drone_connected():
-                print("Login Successful")
-                root.destroy()
-                showFlightSelectionPage(username)
-                return 0
-                # else:
-                #     messagebox.showerror("Error", "Drone is not connected!")
-                #     return 0
+                if dp.drone_connected():
+                    print("Login Successful")
+                    root.destroy()
+                    showFlightSelectionPage(username)
+                    return 0
+                else:
+                    messagebox.showerror("Error", "Drone is not connected!")
+                    return 0
             else:
                 messagebox.showerror("Error","Incorrect password")
                 return 0

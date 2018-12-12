@@ -1,7 +1,6 @@
 # Tello Python3 Control Demo
 # http://www.ryzerobotics.com/
 
-# Theses are the modules that are being imported while running the code.
 import threading
 import socket
 import sys
@@ -11,15 +10,17 @@ from datetime import date
 import sys
 import sqlite3
 
+# I converted the whole codes that were previously under the main function
+# into different subset of functions in order to apply to GUI.
+# Let me explain ones that I newly created.
+
 host = ''
 port = 9000
 locaddr = (host,port)
 
 
-# The software start with creating a UDP socket
-# This socket allows the computer to connect to the drone.
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-# Here are the ip-address and port of the drone that are used for the socket connection.
+
 tello_address = ('192.168.10.1', 8889)
 
 sock.bind(locaddr)
@@ -37,8 +38,6 @@ def recv():
 
 @pytest.fixture()
 def drone_connected():
-    # This function checks if the drone network is connected to the user's PC.
-    # It compares the IP address the PC is getting with the actual drone's IP address.
     hostname = socket.gethostname()
     IPaddress = socket.gethostbyname(hostname)
     if IPaddress[0:10] == '192.168.10':
@@ -46,9 +45,10 @@ def drone_connected():
     else:
         return False
 
+# There are two different instructions now. One is for manual mode and the other one is for automatic mode.
+# They show the meaning of each options in GUI.
 @pytest.fixture()
 def help_command_man():
-    # This function shows the instruction of all the commands for the drone.
     instruction = """
     Here are the commands that you can use:
     (The length of distance the drone move each time is fixed to 50cm.)
@@ -71,6 +71,7 @@ def help_command_auto():
     """
     return instruction
 
+# This function lets the drone get ready to move.
 def Drone_Start(msg):
     if msg == "command":
         msg = msg.encode(encoding="utf-8")
@@ -80,6 +81,7 @@ def Drone_Start(msg):
         # print("\nWrong command!")
         return False
 
+# This function takes command that user clicks as argument and make the drone move as it is commanded.
 def Drone_Excecute(command):
     msg_list = command.split(',')
     for msg in msg_list:
@@ -91,20 +93,19 @@ def Drone_Excecute(command):
             # print ('\n . . .\n')
             sock.close()
 
+# This function closes the socket when user is done flying.
 def Drone_end():
     sock.close()
 
+# This function takes information that user writes as arugment and save into the database.
 def Record_Database(pilot_name = None, flightnote = None, temperature = None, location = None, flight_date = None):
-    ### DATABASE STORAGE ###
-    # We used database called SQlite3 to save the info.
     conn = sqlite3.connect("Drone_Database.db")
 
     cur = conn.cursor()
 
     res = cur.execute("SELECT name FROM sqlite_master WHERE type='table';")
     table_list = cur.fetchall()
-    # Fisrt, the table will be made if there is no table.
-    # There are five attributes in the table for now, but there may be more later on.
+
     if len(table_list) == 0:
         cur.execute('CREATE TABLE flight_metadata (Pilot_Name, Flight_Note, Temperature, Location, Date)')
     else:
@@ -113,7 +114,7 @@ def Record_Database(pilot_name = None, flightnote = None, temperature = None, lo
                 cur.execute('CREATE TABLE flight_metadata (Pilot_Name, Flight_Note, Temperature, Location, Date)')
 
     values = (pilot_name, flightnote, temperature, location, flight_date)
-    # Then the info will be inserted into the table.
+
     cur.execute('INSERT INTO flight_metadata values(?,?,?,?,?)', values)
 
     conn.commit()
