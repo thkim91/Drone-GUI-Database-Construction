@@ -200,6 +200,7 @@ def BeforeStart(username):
 
     def button_click():
         beforestartprogram.destroy()
+        dp.Drone_Start("command")
         showManWindow(username)
 
     label1 = Label(beforestartprogram,text = 'Select Command to start!')
